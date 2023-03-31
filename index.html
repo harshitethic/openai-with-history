@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT PHP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-input {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        #user-message {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #send-button {
+            background-color: #1da1f2;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .user {
+            font-weight: bold;
+        }
+
+        .assistant {
+            font-weight: normal;
+            color: #666;
+        }
+
+        #watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <div id="chat-input">
+            <input type="text" id="user-message" placeholder="Type your message here...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <a href="https://harshitethic.in" id="watermark" target="_blank">harshitethic.in</a>
+
+    <script>
+        document.getElementById("send-button").addEventListener("click", function() {
+            const userMessage = document.getElementById("user-message").value;
+            if (userMessage.trim() === "") return;
+
+            addMessageToChat("user", userMessage);
+            document.getElementById("user-message").value = "";
+
+            fetch("callAI.php?text=" + encodeURIComponent(userMessage))
+                .then((response) => response.text())
+                .then((response) => {
+                    addMessageToChat("assistant", response);
+                });
+        });
+
+                function addMessageToChat(role, message) {
+            const chatMessages = document.getElementById("chat-messages");
+            const messageElement = document.createElement("div");
+
+            messageElement.className = "message " + role;
+            messageElement.innerHTML = '<span class="' + role + '">' + (role === "user" ? "You" : "Assistant") + ': </span>' + message;
+
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
